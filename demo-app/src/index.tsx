@@ -1,15 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
-const HelloWorld = () => {
-
-  return React.createElement('h1', null, 'Hello, World!');
-
-};
+import { HelloWorld } from './components/HelloWorld';
 
 ReactDOM.render(
-  React.createElement(HelloWorld),
+  // React.createElement(HelloWorld),
+  <HelloWorld />,
   document.querySelector('#root'),
 );
 
