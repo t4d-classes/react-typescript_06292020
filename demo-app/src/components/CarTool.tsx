@@ -1,35 +1,25 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC } from 'react';
 
 import { Car } from '../models/Car';
+import { useForm } from '../hooks/useForm';
+import { useList } from '../hooks/useList';
 
 export interface CarToolProps {
   cars: Car[];
 }
 
-export const CarTool: FC<CarToolProps> = (props) => {
+export const CarTool: FC<CarToolProps> = ({ cars: initialCars }) => {
 
-  const [ carForm, setCarForm ] = useState({
+  const [ carForm, change, resetCarForm ] = useForm({
     make: '', model: '', year: 1900, color: '', price: 0,
   });
 
-  // const state1 = useState({
-  //   make: '', model: '', year: 1900, color: '', price: 0,
-  // });
+  const [ cars, appendCar ] = useList([ ...initialCars ]);
 
-  // const carForm = state1[0];
-  // const setCarForm = state1[1];
-
-  const change = (e: ChangeEvent<HTMLInputElement>) => {
-
-    setCarForm({
-      ...carForm,
-      [ e.target.name ]: e.target.type === 'number'
-        ? e.target.valueAsNumber : e.target.value,
-    });
-
+  const addCar = () => {
+    appendCar(carForm);
+    resetCarForm();
   };
-
-  console.log(carForm);
 
   return (
     <>
@@ -48,7 +38,7 @@ export const CarTool: FC<CarToolProps> = (props) => {
           </tr>
         </thead>
         <tbody>
-          {props.cars.map(car => <tr key={car.id}>
+          {cars.map(car => <tr key={car.id}>
             <td>{car.id}</td>
             <td>{car.make}</td>
             <td>{car.model}</td>
@@ -84,6 +74,7 @@ export const CarTool: FC<CarToolProps> = (props) => {
           <input type="number" id="price-input" name="price"
             value={carForm.price} onChange={change} />
         </div>
+        <button type="button" onClick={addCar}>Add Car</button>
       </form>
     </>
   );
