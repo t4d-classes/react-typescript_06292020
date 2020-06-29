@@ -1,6 +1,7 @@
 import React, { FC, useState, ChangeEvent } from 'react';
 
 import { Color } from '../models/Color';
+import { useForm } from '../hooks/useForm';
 
 export interface ColorToolProps {
   colors?: Color[];
@@ -8,31 +9,11 @@ export interface ColorToolProps {
 
 export const ColorTool: FC<any> = ({ colors }) => {
 
-  const [
-    colorForm, // state data
-    setColorForm, // function to update the state data, and re-render the component
-  ] = useState({
+  const [ colorForm, change ] = useForm({
     name: '',
     hexcode: '',
-  } /* initial state data */);
+  });
 
-  const change = (e: ChangeEvent<HTMLInputElement>) => {
-
-    // updates the color form state and re-renders
-    setColorForm({
-      // copy over the original color form
-      ...colorForm,
-
-      // update the one property I am typing into
-      // computed property, the expression in the square braces
-      // will be evaluated to specify the property name which
-      // is being updated
-      [ e.target.name ]: e.target.type === 'number' ? e.target.valueAsNumber : e.target.value,
-    });
-
-  };
-
-  // output to the console on each re-render
   console.log(colorForm);
 
   return (
@@ -54,7 +35,7 @@ export const ColorTool: FC<any> = ({ colors }) => {
         </div>
         <div>
           <label htmlFor="hexcode-input">Hexcode</label>
-          <input type="number" id="hexcode-input" name="hexcode" value={colorForm.hexcode} onChange={change} />
+          <input type="text" id="hexcode-input" name="hexcode" value={colorForm.hexcode} onChange={change} />
         </div>
       </form>
     </>

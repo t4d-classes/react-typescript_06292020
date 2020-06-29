@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState, ChangeEvent } from 'react';
 
 import { Car } from '../models/Car';
 
@@ -7,6 +7,29 @@ export interface CarToolProps {
 }
 
 export const CarTool: FC<CarToolProps> = (props) => {
+
+  const [ carForm, setCarForm ] = useState({
+    make: '', model: '', year: 1900, color: '', price: 0,
+  });
+
+  // const state1 = useState({
+  //   make: '', model: '', year: 1900, color: '', price: 0,
+  // });
+
+  // const carForm = state1[0];
+  // const setCarForm = state1[1];
+
+  const change = (e: ChangeEvent<HTMLInputElement>) => {
+
+    setCarForm({
+      ...carForm,
+      [ e.target.name ]: e.target.type === 'number'
+        ? e.target.valueAsNumber : e.target.value,
+    });
+
+  };
+
+  console.log(carForm);
 
   return (
     <>
@@ -35,6 +58,33 @@ export const CarTool: FC<CarToolProps> = (props) => {
           </tr>)}
         </tbody>
       </table>
+      <form>
+        <div>
+          <label htmlFor="make-input">Make</label>
+          <input type="text" id="make-input" name="make"
+            value={carForm.make} onChange={change} />
+        </div>
+        <div>
+          <label htmlFor="model-input">Model</label>
+          <input type="text" id="model-input" name="model"
+            value={carForm.model} onChange={change} />
+        </div>
+        <div>
+          <label htmlFor="year-input">Year</label>
+          <input type="number" id="year-input" name="year"
+            value={carForm.year} onChange={change} />
+        </div>
+        <div>
+          <label htmlFor="color-input">Color</label>
+          <input type="text" id="color-input" name="color"
+            value={carForm.color} onChange={change} />
+        </div>
+        <div>
+          <label htmlFor="price-input">Price</label>
+          <input type="number" id="price-input" name="price"
+            value={carForm.price} onChange={change} />
+        </div>
+      </form>
     </>
   );
 };
