@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { Item } from '../models/Item';
 
 type AppendItem<S> = (item: S) => void;
+type RemoveItem = (itemId: number) => void;
 
 type UseList = <T extends Item>(initialItems: T[]) => ([
-  T[], AppendItem<T>,
+  T[], AppendItem<T>, RemoveItem,
 ]);
 
 export const useList: UseList = <T extends Item>(initialItems: T[]) => {
@@ -25,6 +26,13 @@ export const useList: UseList = <T extends Item>(initialItems: T[]) => {
     ]);
   };
 
-  return [ items, appendItem ];
+  const removeItem: RemoveItem = (itemId) => {
+
+    
+
+    setItems(items.filter(item => item.id !== itemId));
+  };
+
+  return [ items, appendItem, removeItem ];
 
 };
