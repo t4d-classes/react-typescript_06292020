@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 
 import { Car } from '../models/Car';
 import { useForm } from '../hooks/useForm';
@@ -8,9 +8,11 @@ export interface CarFormProps {
   onSubmitCar: (car: Car) => void;
 }
 
-export const CarForm: FC<CarFormProps> = ({
+export const CarForm: FC<CarFormProps> = memo(({
   buttonText, onSubmitCar
 }) => {
+
+  console.log('rendering car form');
 
   const [ carForm, change, resetCarForm ] = useForm({
     make: '', model: '', year: 1900, color: '', price: 0,
@@ -52,7 +54,7 @@ export const CarForm: FC<CarFormProps> = ({
         {buttonText}</button>
     </form>
   );
-};
+});
 
 CarForm.defaultProps = {
   buttonText: 'Submit Car',
