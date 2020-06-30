@@ -1,42 +1,54 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { Car } from '../models/Car';
-import { useList } from './useList';
+import { RestService } from '../services/RestService';
 
-type AddCar = (car: Car) => void;
+type RefreshCars = () => Promise<void>;
+type AddCar = (car: Car) => Promise<void>;
 type SaveCar = AddCar;
-type DeleteCar = (carId: number) => void;
-type EditCar = DeleteCar;
+type DeleteCar = (carId: number) => Promise<void>;
+type EditCar = (carId: number) => void;
 type CancelCar = () => void;
 
-type UseCarTool = (initialCar: Car[]) => ([
-  Car[], number, AddCar, SaveCar, DeleteCar, EditCar, CancelCar
+type UseCarTool = (carsSvc: RestService<Car>) => ([
+  Car[], number, RefreshCars, AddCar, SaveCar, DeleteCar, EditCar, CancelCar
 ]) 
 
-export const useCarTool: UseCarTool = (initialCars: Car[]) => {
+export const useCarTool: UseCarTool = (carsSvc: RestService<Car>) => {
 
-  const [ cars, appendCar, removeCar, replaceCar ] = useList([ ...initialCars ]);
+  const [ cars, setCars ] = useState<Car[]>([]);
 
   const [ editCarId, setEditCarId ] = useState(-1);
 
-  console.log('use car tool rendering');
-
-  const addCar = useCallback((car: Car) => {
-    appendCar(car);
+  const refreshCars = useCallback(async () => {
+    setCars(await carsSvc.all());
     setEditCarId(-1);
-  }, [ appendCar ]);
+  }, [ carsSvc ]);
 
-  const saveCar = (car: Car) => {
-    replaceCar(car);
-    setEditCarId(-1);
-  };
+  const addCar = useCallback(async (car: Car) => {
+    await carsSvc.append(car);
+    await refreshCars();
+  }, [ carsSvc, refreshCars ]);
 
-  const deleteCar = (carId: number) => {
-    removeCar(carId);
-    setEditCarId(-1);
-  };
+  const saveCar = useCallback(async (car: Car) => {
+    await carsSvc.replace(car);
+    await refreshCars();
+  }, [ carsSvc, refreshCars ]);
 
-  return [ cars, editCarId, addCar, saveCar, deleteCar, setEditCarId, () => setEditCarId(-1) ];
+  const deleteCar = useCallback(async (carId: number) => {
+    await carsSvc.remove(carId);
+    await refreshCars();
+  }, [ carsSvc, refreshCars ]);
+
+  useEffect(() => {
+    refreshCars();
+  }, [ refreshCars ]);
+
+  return [
+    cars, editCarId,
+    refreshCars, addCar, saveCar, deleteCar,
+    setEditCarId, () => setEditCarId(-1),
+  ];
 
 
 };
